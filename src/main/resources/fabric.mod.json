@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "freemotes",
+  "version": "${version}",
+  "name": "FreeMotes",
+  "description": "Emotes and cosmetics, all free.",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {},
+  "depends": { "fabricloader": ">=0.16.0", "minecraft": "~1.21.11", "fabric-api": "*" }
+}

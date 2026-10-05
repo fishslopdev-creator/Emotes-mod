@@ -154,7 +154,7 @@ public final class Emotes {
                 })
                 .props(ctx -> {
                     ctx.rightHand();
-                    ctx.d.rotX(90);
+                    ctx.d.rotX(180); // blade points away from the shoulder
                     ctx.d.box(-0.5f, -3, -0.5f, 0.5f, 1, 0.5f, 0xFF4A2F1A); // grip
                     ctx.d.box(-2.5f, -3.8f, -0.6f, 2.5f, -3, 0.6f, 0xFF2BC7B0); // guard
                     ctx.d.box(-0.9f, -16, -0.4f, 0.9f, -3.8f, 0.4f, 0xFF7FFFEF); // blade
@@ -312,8 +312,7 @@ public final class Emotes {
                 })
                 .props(ctx -> {
                     ctx.rightHand();
-                    ctx.d.rotX(-90);
-                    ctx.d.move(0, 0, 0);
+                    ctx.d.rotX(180); // cup opens away from the shoulder (upward while raised)
                     int gold = 0xFFFFC62E, dark = 0xFFCC8A10;
                     ctx.d.box(-3, 0, -3, 3, 1.5f, 3, dark);           // base
                     ctx.d.box(-1, -3, -1, 1, 0, 1, gold);              // stem

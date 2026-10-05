@@ -212,14 +212,14 @@ final class SupremeEmote {
         }
 
         // pillar of light (from the ground into the sky) while ascended
+        // (split above the crown and below the feet so the player stays visible inside it)
         if (t >= RISE_END && t < SLAM) {
-            float w = c.step(100) % 2 == 0 ? 7f : 8.5f;
-            c.d.glow(-w * 0.45f, ground - 400f, -w * 0.45f, w * 0.45f, ground, w * 0.45f, 0xFFFFF2B0);
-            c.d.glow(-w, ground - 400f, -w, w, ground, w, 0xFF4A1A80);
+            float w = c.step(100) % 2 == 0 ? 4f : 5.5f;
+            pillar(c, -16f, -400f, w, ground);
         }
         // detonation flash column
         if (t >= CHARGE_END && t < CHARGE_END + 200) {
-            c.d.glow(-4, ground - 200f, -4, 4, ground, 4, WHITE);
+            pillar(c, -16f, -200f, 3f, ground);
         }
 
         if (powered) {
@@ -259,7 +259,6 @@ final class SupremeEmote {
                     c.d.rotX(45);
                     int col = i % 2 == 0 ? CYAN : 0xFFFF5AD7;
                     c.d.glowCube(0, 0, 0, 2.4f, col);
-                    c.d.box(-1.2f, -1.2f, -1.2f, 1.2f, 1.2f, 1.2f, 0xFFFFFFFF);
                     c.d.pop();
                 }
             }
@@ -303,6 +302,16 @@ final class SupremeEmote {
             wing(c, open, flap, 1);
             wing(c, open, flap, -1);
             c.end();
+        }
+    }
+
+    /** Beam of light from {@code top} up to {@code sky}, plus a stub under the feet down to the ground. */
+    private static void pillar(PropCtx c, float top, float sky, float w, float ground) {
+        c.d.glow(-w * 0.45f, sky, -w * 0.45f, w * 0.45f, top, w * 0.45f, 0xFFFFF2B0);
+        c.d.glow(-w, sky, -w, w, top, w, 0xFF4A1A80);
+        if (ground > 24.5f) {
+            c.d.glow(-w * 0.45f, 24.5f, -w * 0.45f, w * 0.45f, ground, w * 0.45f, 0xFFFFF2B0);
+            c.d.glow(-w, 24.5f, -w, w, ground, w, 0xFF4A1A80);
         }
     }
 

@@ -90,8 +90,9 @@ public class ShopScreen extends Screen {
         super.render(g, mouseX, mouseY, partialTick);
         FMConfig cfg = FMConfig.get();
 
-        g.drawString(font, Component.literal("FREEMOTES SHOP").withStyle(ChatFormatting.BOLD), 10, 8, 0xFFFFD040);
-        g.drawString(font, "Coins: ∞   Everything is FREE!", 10, 22, 0xFF7CFF7C);
+        g.drawString(font, Component.literal("FREEMOTES SHOP").withStyle(ChatFormatting.BOLD), 10, 5, 0xFFFFD040);
+        g.drawString(font, "Coins: ∞", 10, 16, 0xFF7CFF7C);
+        g.drawString(font, "Everything is FREE!", 10, 26, 0xFF7CFF7C);
 
         // player preview (plays your current emote, shows your cosmetics)
         Ui.panel(g, 8, 36, 116, height - 70, 0xE0180F28, 0xFF4A3A70);

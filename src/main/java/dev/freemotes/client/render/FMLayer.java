@@ -24,9 +24,11 @@ public class FMLayer<S extends HumanoidRenderState, M extends HumanoidModel<S>> 
         float lift = snap.pose() != null ? snap.pose().lift : 0f;
 
         for (Cosmetic cosmetic : snap.cosmetics()) {
+            draw.resetMaterials();
             cosmetic.renderer().accept(new PropCtx(draw, model, snap.clockMs(), lift));
         }
         if (snap.emote() != null) {
+            draw.resetMaterials();
             snap.emote().renderProps(new PropCtx(draw, model, snap.elapsedMs(), lift));
         }
     }

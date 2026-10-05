@@ -4,24 +4,25 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 
-/** The three render types all cosmetics and props are drawn with (on a plain white texture, colored per vertex). */
+/** The three render types all cosmetics and props are drawn with: the material atlas, tinted per vertex. */
 public final class FMRenderTypes {
-    public static final Identifier WHITE = Identifier.fromNamespaceAndPath("freemotes", "textures/misc/white.png");
+    /** 4x4 grid of 16px material tiles, see {@link Material} and tools/gen_textures.py. */
+    public static final Identifier ATLAS = Identifier.fromNamespaceAndPath("freemotes", "textures/misc/materials.png");
 
     private FMRenderTypes() {}
 
     /** Opaque, lit like the player. */
     public static RenderType solid() {
-        return RenderTypes.entityCutoutNoCull(WHITE);
+        return RenderTypes.entityCutoutNoCull(ATLAS);
     }
 
     /** See-through, full bright. */
     public static RenderType ghost() {
-        return RenderTypes.entityTranslucent(WHITE);
+        return RenderTypes.entityTranslucent(ATLAS);
     }
 
     /** Additive glow (like spider eyes). */
     public static RenderType glow() {
-        return RenderTypes.eyes(WHITE);
+        return RenderTypes.eyes(ATLAS);
     }
 }

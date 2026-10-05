@@ -4,6 +4,7 @@ import dev.freemotes.client.cosmetic.Cosmetic.Slot;
 import dev.freemotes.client.emote.Emote.Rarity;
 import dev.freemotes.client.emote.PropCtx;
 import dev.freemotes.client.render.Draw;
+import dev.freemotes.client.render.Material;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -41,24 +42,30 @@ public final class Cosmetics {
         // ------------------------------------------------------------------ HATS
         reg("top_hat", "Top Hat", Slot.HEAD, Rarity.COMMON, Items.BLACK_WOOL, "Very distinguished. Very tall.", c -> {
             Draw d = c.d;
-            d.box(-6, -8.7f, -6, 6, -8f, 6, 0xFF151515);
-            d.box(-4, -16, -4, 4, -8.7f, 4, 0xFF1B1B1B);
-            d.box(-4.15f, -10.5f, -4.15f, 4.15f, -8.7f, 4.15f, 0xFFB01020);
+            d.mat(Material.CLOTH);
+            d.box(-6, -8.7f, -6, 6, -8f, 6, 0xFF3A3A3A);
+            d.box(-4, -16, -4, 4, -8.7f, 4, 0xFF404040);
+            d.box(-4.15f, -10.5f, -4.15f, 4.15f, -8.7f, 4.15f, 0xFFE02030);
+            d.mat(Material.GOLD);
+            d.box(-1, -10.3f, -4.3f, 1, -8.9f, -4.15f, 0xFFFFD040); // buckle
         });
 
         reg("party_hat", "Party Hat", Slot.HEAD, Rarity.COMMON, Items.CAKE, "Every day is a party.", c -> {
             Draw d = c.d;
+            d.mat(Material.STRIPES);
             int[] cols = {0xFFFF4FA0, 0xFF40D0FF, 0xFFFFE040, 0xFF60FF70, 0xFFFF4FA0};
             for (int i = 0; i < 5; i++) {
                 float r = 3.6f - i * 0.75f;
                 d.box(-r, -10 - i * 1.6f, -r, r, -8 - i * 1.6f, r, cols[i]);
             }
             int pom = c.step(400) % 2 == 0 ? 0xFFFFFFFF : 0xFFFFF0A0;
+            d.mat(Material.FUR);
             d.box(-0.9f, -17.6f, -0.9f, 0.9f, -15.8f, 0.9f, pom);
         });
 
         reg("propeller", "Propeller Cap", Slot.HEAD, Rarity.RARE, Items.LIGHT_WEIGHTED_PRESSURE_PLATE, "Does not let you fly. Spins anyway.", c -> {
             Draw d = c.d;
+            d.mat(Material.CLOTH);
             int[] cols = {0xFFE02020, 0xFFFFD020, 0xFF2060E0, 0xFF20B040};
             for (int i = 0; i < 4; i++) {
                 d.push();
@@ -67,7 +74,8 @@ public final class Cosmetics {
                 d.pop();
             }
             d.box(-4.3f, -8f, -7.5f, 4.3f, -7.5f, -4.3f, 0xFFE02020); // visor
-            d.box(-0.4f, -11, -0.4f, 0.4f, -8.8f, 0.4f, 0xFF888888);
+            d.mat(Material.METAL);
+            d.box(-0.4f, -11, -0.4f, 0.4f, -8.8f, 0.4f, 0xFFB0B0B0);
             d.push();
             d.move(0, -11.2f, 0);
             d.rotY(c.step(50) * 30f);
@@ -78,7 +86,8 @@ public final class Cosmetics {
 
         reg("wizard_hat", "Wizard Hat", Slot.HEAD, Rarity.EPIC, Items.ENCHANTED_BOOK, "A wizard is never late.", c -> {
             Draw d = c.d;
-            int blue = 0xFF2A2F9C;
+            int blue = 0xFF4048D0;
+            d.mat(Material.STARS);
             d.box(-6.5f, -8.8f, -6.5f, 6.5f, -8f, 6.5f, blue);
             float[] r = {4.2f, 3.4f, 2.6f, 1.9f, 1.3f};
             float x = 0;
@@ -87,7 +96,8 @@ public final class Cosmetics {
                 d.box(x - r[i], -11 - i * 2.2f, -r[i], x + r[i], -8.8f - i * 2.2f, r[i], blue);
             }
             d.box(x + 0.5f, -20.6f, -0.7f, x + 2.6f, -19.4f, 0.7f, blue);
-            d.box(-4.3f, -10, -4.3f, 4.3f, -8.8f, 4.3f, 0xFFE8C030);
+            d.mat(Material.GOLD);
+            d.box(-4.3f, -10, -4.3f, 4.3f, -8.8f, 4.3f, 0xFFFFD040);
             boolean tw = c.step(300) % 2 == 0;
             d.glow(-2, tw ? -13 : -14, -3.5f, -1, tw ? -12 : -13, -3.3f, 0xFFFFF070);
             d.glow(1.5f, tw ? -15 : -16, -2.8f, 2.3f, tw ? -14.2f : -15.2f, -2.6f, 0xFFFFF070);
@@ -95,10 +105,13 @@ public final class Cosmetics {
 
         reg("viking", "Viking Helmet", Slot.HEAD, Rarity.RARE, Items.IRON_HELMET, "Raid the village. Politely.", c -> {
             Draw d = c.d;
-            d.box(-4.6f, -9, -4.6f, 4.6f, -5, 4.6f, 0xFF8D8D95);
-            d.box(-3.5f, -10, -3.5f, 3.5f, -9, 3.5f, 0xFF9D9DA5);
-            d.box(-0.6f, -5, -4.9f, 0.6f, -2, -4.6f, 0xFF8D8D95); // nose guard
-            d.box(-4.7f, -6, -4.7f, 4.7f, -5, 4.7f, 0xFF7A5A2A);
+            d.mat(Material.METAL);
+            d.box(-4.6f, -9, -4.6f, 4.6f, -5, 4.6f, 0xFFB8B8C0);
+            d.box(-3.5f, -10, -3.5f, 3.5f, -9, 3.5f, 0xFFC4C4CC);
+            d.box(-0.6f, -5, -4.9f, 0.6f, -2, -4.6f, 0xFFB8B8C0); // nose guard
+            d.mat(Material.LEATHER);
+            d.box(-4.7f, -6, -4.7f, 4.7f, -5, 4.7f, 0xFFA07040);
+            d.mat(Material.PLAIN); // bone horns
             for (int s = -1; s <= 1; s += 2) {
                 d.box(s * 4.6f, -8, -1, s * 6.6f, -6.5f, 1, 0xFFF0E8D0);
                 d.box(s * 6, -11, -0.9f, s * 7.4f, -8, 0.9f, 0xFFF0E8D0);
@@ -108,7 +121,8 @@ public final class Cosmetics {
 
         reg("crown", "Royal Crown", Slot.HEAD, Rarity.LEGENDARY, Items.GOLDEN_HELMET, "Heavy is the head. Sparkly too.", c -> {
             Draw d = c.d;
-            int gold = 0xFFFFC21A;
+            int gold = 0xFFFFD040;
+            d.mat(Material.GOLD).glowMat(Material.GEM);
             d.box(-4.6f, -10, -4.6f, 4.6f, -8, 4.6f, gold);
             for (int i = -1; i <= 1; i++) {
                 float o = i * 3.4f;
@@ -136,7 +150,8 @@ public final class Cosmetics {
 
         reg("cat_ears", "Cat Ears", Slot.HEAD, Rarity.COMMON, Items.STRING, "Nya.", c -> {
             Draw d = c.d;
-            int fur = 0xFF303030, pink = 0xFFFF9EC0;
+            int fur = 0xFF505050, pink = 0xFFFFB0D0;
+            d.mat(Material.FUR);
             boolean twitch = c.ms % 3000 < 150;
             for (int s = -1; s <= 1; s += 2) {
                 float tw = (twitch && s > 0) ? -0.6f : 0f;
@@ -149,8 +164,9 @@ public final class Cosmetics {
 
         reg("devil_horns", "Devil Horns", Slot.HEAD, Rarity.RARE, Items.NETHER_WART, "A little bit evil.", c -> {
             Draw d = c.d;
+            d.mat(Material.SCALES);
             for (int s = -1; s <= 1; s += 2) {
-                d.box(s * 1.5f, -9, -2.5f, s * 3.5f, -8, -0.5f, 0xFFB01010);
+                d.box(s * 1.5f, -9, -2.5f, s * 3.5f, -8, -0.5f, 0xFFD02020);
                 d.box(s * 2.2f, -10.5f, -2.2f, s * 3.8f, -9, -0.8f, 0xFFC82020);
                 d.box(s * 3.0f, -11.8f, -1.9f, s * 4.2f, -10.5f, -1.0f, 0xFFE03030);
                 d.box(s * 3.6f, -12.8f, -1.7f, s * 4.4f, -11.8f, -1.2f, 0xFFFF5050);
@@ -159,7 +175,9 @@ public final class Cosmetics {
 
         reg("chef_hat", "Chef Hat", Slot.HEAD, Rarity.COMMON, Items.BREAD, "Let him cook.", c -> {
             Draw d = c.d;
+            d.mat(Material.CLOTH);
             d.box(-4.3f, -10.5f, -4.3f, 4.3f, -7.8f, 4.3f, 0xFFF4F4F4);
+            d.mat(Material.CLOUD);
             d.box(-5.2f, -14, -5.2f, 5.2f, -10.5f, 5.2f, 0xFFFFFFFF);
             d.box(-3.5f, -15, -3.5f, 3.5f, -14, 3.5f, 0xFFF8F8F8);
         });
@@ -167,7 +185,8 @@ public final class Cosmetics {
         // ------------------------------------------------------------------ FACE
         reg("shades", "Deal-With-It Shades", Slot.FACE, Rarity.RARE, Items.TINTED_GLASS, "Pixelated. Obviously.", c -> {
             Draw d = c.d;
-            int black = 0xFF080808;
+            int black = 0xFF262626;
+            d.glowMat(Material.GEM);
             d.box(-4.4f, -5, -4.5f, 4.4f, -4.2f, -4.1f, black);
             d.box(-3.6f, -4.2f, -4.5f, -0.6f, -2.6f, -4.1f, black);
             d.box(0.6f, -4.2f, -4.5f, 3.6f, -2.6f, -4.1f, black);
@@ -179,7 +198,8 @@ public final class Cosmetics {
 
         reg("mustache", "Fancy Mustache", Slot.FACE, Rarity.COMMON, Items.BROWN_WOOL, "Sophistication intensifies.", c -> {
             Draw d = c.d;
-            int brown = 0xFF4A2C14;
+            int brown = 0xFF7A4A24;
+            d.mat(Material.FUR);
             d.box(-2.5f, -2.6f, -4.5f, 2.5f, -1.8f, -4.1f, brown);
             d.box(-3.6f, -2.2f, -4.5f, -2.5f, -1.4f, -4.1f, brown);
             d.box(2.5f, -2.2f, -4.5f, 3.6f, -1.4f, -4.1f, brown);
@@ -189,7 +209,8 @@ public final class Cosmetics {
 
         reg("visor", "Cyber Visor", Slot.FACE, Rarity.EPIC, Items.CYAN_STAINED_GLASS, "Scanning... target is cringe.", c -> {
             Draw d = c.d;
-            d.box(-4.5f, -5.2f, -4.6f, 4.5f, -2.8f, -4.1f, 0xFF1A1A22);
+            d.mat(Material.METAL);
+            d.box(-4.5f, -5.2f, -4.6f, 4.5f, -2.8f, -4.1f, 0xFF40404A);
             long s = c.step(90) % 14;
             float x = s < 7 ? -3.5f + s : 3.5f - (s - 7);
             d.glow(-4.2f, -4.4f, -4.75f, 4.2f, -3.6f, -4.6f, 0xFF105060);
@@ -202,23 +223,27 @@ public final class Cosmetics {
         });
 
         reg("dragon_wings", "Dragon Wings", Slot.BACK, Rarity.LEGENDARY, Items.DRAGON_HEAD, "Ender dragon cosplay.", c -> {
-            wings(c, 0xFF2A1238, 0xFF3D1A52, 0xFF8A3CC0, true);
+            wings(c, 0xFF4A2468, 0xFF6A3090, 0xFFA050E0, true);
         });
 
         reg("backpack", "Adventurer Pack", Slot.BACK, Rarity.COMMON, Items.BUNDLE, "Holds exactly zero extra items.", c -> {
             Draw d = c.d;
-            d.box(-3.5f, 1, 2, 3.5f, 10, 5, 0xFF7A4E2A);
+            d.mat(Material.LEATHER);
+            d.box(-3.5f, 1, 2, 3.5f, 10, 5, 0xFFA06A3A);
             d.box(-3.6f, 1, 1.9f, 3.6f, 3, 5.1f, 0xFF5E3B1E);
             d.box(-2.5f, 5, 5, 2.5f, 9, 6, 0xFF8E5E34);
-            d.box(-0.5f, 2.5f, 5.1f, 0.5f, 3.5f, 5.3f, 0xFFE0C040);
+            d.mat(Material.GOLD);
+            d.box(-0.5f, 2.5f, 5.1f, 0.5f, 3.5f, 5.3f, 0xFFFFD040);
+            d.mat(Material.LEATHER);
             d.box(-4, 0, -2.2f, -3, 8, 2, 0xFF5E3B1E);
             d.box(3, 0, -2.2f, 4, 8, 2, 0xFF5E3B1E);
         });
 
         reg("jetpack", "Jetpack", Slot.BACK, Rarity.LEGENDARY, Items.FIRE_CHARGE, "Flames included. Flight not.", c -> {
             Draw d = c.d;
+            d.mat(Material.METAL);
             for (int s = -1; s <= 1; s += 2) {
-                d.box(s * 0.5f, 1, 2, s * 4, 10, 5.5f, 0xFFB8BCC4);
+                d.box(s * 0.5f, 1, 2, s * 4, 10, 5.5f, 0xFFD0D4DC);
                 d.box(s * 0.7f, 0, 2.3f, s * 3.8f, 1, 5.2f, 0xFFE03020);
                 d.box(s * 1.2f, 10, 2.6f, s * 3.3f, 11.5f, 4.9f, 0xFF4A4A50);
                 boolean big = (c.step(60) + (s > 0 ? 1 : 0)) % 2 == 0;
@@ -235,6 +260,7 @@ public final class Cosmetics {
     /** Feathered / membrane wings that flap in two snapped positions. */
     private static void wings(PropCtx c, int outer, int mid, int inner, boolean membrane) {
         Draw d = c.d;
+        d.mat(membrane ? Material.SCALES : Material.FEATHER);
         boolean up = c.step(400) % 2 == 0;
         for (int side = -1; side <= 1; side += 2) {
             d.push();

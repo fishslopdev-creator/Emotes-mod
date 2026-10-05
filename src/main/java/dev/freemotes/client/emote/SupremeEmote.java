@@ -1,6 +1,7 @@
 package dev.freemotes.client.emote;
 
 import dev.freemotes.client.emote.Emote.Rarity;
+import dev.freemotes.client.render.Material;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -258,7 +259,9 @@ final class SupremeEmote {
                     c.d.rotZ(45);
                     c.d.rotX(45);
                     int col = i % 2 == 0 ? CYAN : 0xFFFF5AD7;
+                    c.d.glowMat(Material.GEM);
                     c.d.glowCube(0, 0, 0, 2.4f, col);
+                    c.d.glowMat(Material.ENERGY);
                     c.d.pop();
                 }
             }
@@ -316,6 +319,7 @@ final class SupremeEmote {
     }
 
     private static void crown(PropCtx c) {
+        c.d.mat(Material.GOLD).glowMat(Material.GEM);
         c.d.box(-4.6f, -1.5f, -4.6f, 4.6f, 0.5f, 4.6f, GOLD);
         c.d.box(-4.2f, -1.4f, -4.2f, 4.2f, 0.6f, 4.2f, 0xFF7A4A00); // inner (hides the hollow)
         for (int i = -1; i <= 1; i++) {
@@ -328,10 +332,12 @@ final class SupremeEmote {
         int gem = c.step(200) % 2 == 0 ? 0xFFFF2050 : 0xFF40E0FF;
         c.d.glow(-0.8f, -1.2f, -5.0f, 0.8f, 0.2f, -4.5f, gem);
         c.d.glow(-0.6f, -5.0f, -4.4f, 0.6f, -3.8f, -4.0f, gem);
+        c.d.mat(Material.PLAIN).glowMat(Material.ENERGY);
     }
 
     /** One wing; side 1 = right, -1 = left (mirrored by a rotation so face culling stays correct). */
     private static void wing(PropCtx c, float open, float flap, int side) {
+        c.d.glowMat(Material.FEATHER);
         c.d.push();
         c.d.move(side, 0, 0);
         c.d.rotY(side > 0 ? -flap : 180 + flap);
@@ -345,6 +351,7 @@ final class SupremeEmote {
         }
         c.d.glow(0, -1.6f, -0.6f, 28, -0.6f, 0.6f, WHITE); // leading edge
         c.d.pop();
+        c.d.glowMat(Material.ENERGY);
     }
 
     /** A flat ring (in the XZ plane) made of glowing blocks. */

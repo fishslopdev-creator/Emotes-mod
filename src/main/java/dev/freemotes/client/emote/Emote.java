@@ -50,6 +50,8 @@ public final class Emote {
     final List<Integer> durations = new ArrayList<>();
     boolean loop;
     int totalMs;
+    /** Looping emotes restart here (ms), so intro frames before it play only once. */
+    int loopStart;
     /** For looping emotes: how long they play in total before ending on their own (0 = until you move). */
     int playFor;
     Effects effects = fx -> {};
@@ -94,6 +96,12 @@ public final class Emote {
         return this;
     }
 
+    /** Frames added after this call form the loop; earlier frames are a one-time intro. */
+    public Emote loopFromHere() {
+        this.loopStart = totalMs;
+        return this;
+    }
+
     public Emote loop(int playForMs) {
         this.loop = true;
         this.playFor = playForMs;
@@ -120,9 +128,21 @@ public final class Emote {
         return totalMs;
     }
 
+    /** Maps elapsed time onto the timeline (wrapping loops back to {@link #loopStart}). */
+    public long timeInCycle(long elapsedMs) {
+        if (!loop) return Math.min(elapsedMs, totalMs - 1);
+        if (elapsedMs < totalMs) return Math.max(0, elapsedMs);
+        return loopStart + Math.floorMod(elapsedMs - loopStart, (long) (totalMs - loopStart));
+    }
+
+    /** Length of the repeating part of a looping emote. */
+    long cycleMs() {
+        return totalMs - loopStart;
+    }
+
     public Pose poseAt(long elapsedMs) {
         if (poses.isEmpty()) return new Pose();
-        long t = loop ? Math.floorMod(elapsedMs, totalMs) : Math.min(elapsedMs, totalMs - 1);
+        long t = timeInCycle(elapsedMs);
         long acc = 0;
         for (int i = 0; i < poses.size(); i++) {
             acc += durations.get(i);

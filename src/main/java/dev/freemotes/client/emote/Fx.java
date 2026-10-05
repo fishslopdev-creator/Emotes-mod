@@ -29,18 +29,17 @@ public final class Fx {
         this.cos = Math.cos(yaw);
     }
 
-    /** True exactly once, on the tick that passes {@code ms}. Works inside loops too. */
+    /** True exactly once, on the tick that passes {@code ms}. Inside loops it fires on every pass. */
     public boolean at(long ms) {
-        if (emote.loops()) {
-            long cycle = emote.totalMs;
-            long a = prev < 0 ? -1 : prev;
-            for (long base = (Math.max(a, 0) / cycle) * cycle; base <= now; base += cycle) {
-                long t = base + ms;
-                if (t > a && t <= now) return true;
-            }
-            return false;
+        if (prev < ms && ms <= now) return true;
+        if (!emote.loops() || ms < emote.loopStart || ms >= emote.totalMs) return false;
+        long cycle = emote.cycleMs();
+        // later repetitions of a looped timestamp happen at ms + k*cycle
+        long k = Math.max(1, (prev - ms) / cycle);
+        for (long t = ms + k * cycle; t <= now; t += cycle) {
+            if (t > prev) return true;
         }
-        return prev < ms && ms <= now;
+        return false;
     }
 
     public boolean every(long periodMs) {
@@ -48,7 +47,7 @@ public final class Fx {
     }
 
     public boolean between(long from, long to) {
-        long t = emote.loops() ? Math.floorMod(now, emote.totalMs) : now;
+        long t = emote.loops() ? emote.timeInCycle(now) : now;
         return t >= from && t < to;
     }
 

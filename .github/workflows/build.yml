@@ -63,7 +63,11 @@ jobs:
       - name: Client gametest (boots the game headless, plays every emote, takes screenshots)
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri > /dev/null
+          nproc; free -g
           xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest
+        env:
+          LP_NUM_THREADS: 2
+          MESA_GL_VERSION_OVERRIDE: "4.5"
 
       - name: Collect screenshots + log
         if: always()

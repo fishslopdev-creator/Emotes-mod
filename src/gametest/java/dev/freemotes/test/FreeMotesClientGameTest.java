@@ -22,7 +22,7 @@ public class FreeMotesClientGameTest implements FabricClientGameTest {
         });
 
         try (TestSingleplayerContext world = context.worldBuilder().create()) {
-            world.getClientWorld().waitForChunksToRender();
+            context.waitTicks(60);
 
             for (Emote emote : Emotes.ALL) {
                 context.runOnClient(mc -> EmoteManager.playLocal(emote));

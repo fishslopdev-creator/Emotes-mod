@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "freemotes",
+  "version": "${version}",
+  "name": "FreeMotes",
+  "description": "Chonky stepped-frame emotes, an emote wheel and a cosmetics shop where everything is free. Includes the SUPREME emote.",
+  "authors": ["fishslopdev-creator"],
+  "license": "MIT",
+  "icon": "assets/freemotes/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["dev.freemotes.FreeMotes"],
+    "client": ["dev.freemotes.client.FreeMotesClient"]
+  },
+  "mixins": [
+    { "config": "freemotes.client.mixins.json", "environment": "client" }
+  ],
+  "depends": {
+    "fabricloader": ">=0.17.0",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

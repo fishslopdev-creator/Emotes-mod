@@ -1,0 +1,108 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Use the newest Fabric Loader + Fabric API for this Minecraft version
+        run: |
+          MC=$(grep '^minecraft_version' gradle.properties | cut -d= -f2)
+          LOADER=$(curl -fsS https://meta.fabricmc.net/v2/versions/loader | jq -r '[.[]|select(.stable)][0].version')
+          API=$(curl -fsS https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml \
+                | grep -o "<version>[^<]*+$MC</version>" | sed 's/<[^>]*>//g' | tail -1)
+          echo "Minecraft $MC -> loader $LOADER, fabric-api $API"
+          [ -n "$LOADER" ] && sed -i "s/^loader_version=.*/loader_version=$LOADER/" gradle.properties
+          [ -n "$API" ] && sed -i "s/^fabric_version=.*/fabric_version=$API/" gradle.properties
+          cat gradle.properties
+
+      - name: Build
+        run: chmod +x gradlew && ./gradlew build
+
+      - name: Dump Minecraft API signatures (on failure, to help fix compile errors)
+        if: failure()
+        run: |
+          JAR=$(find ~/.gradle .gradle -path '*minecraft*' -name '*.jar' ! -name '*sources*' 2>/dev/null | grep -iE 'merged|client' | grep -v intermediary | head -1)
+          echo "jar: $JAR"
+          for c in net.minecraft.client.renderer.entity.layers.RenderLayer \
+                   net.minecraft.client.renderer.SubmitNodeCollector \
+                   net.minecraft.client.renderer.OrderedSubmitNodeCollector \
+                   net.minecraft.client.renderer.rendertype.RenderTypes \
+                   net.minecraft.client.renderer.RenderType \
+                   'net.minecraft.client.KeyMapping$Category' \
+                   net.minecraft.client.gui.screens.inventory.InventoryScreen \
+                   net.minecraft.client.model.geom.PartPose \
+                   net.minecraft.client.renderer.entity.LivingEntityRenderer; do
+            echo "=== $c"; javap -cp "$JAR" "$c" 2>&1 | grep -vE '^Compiled' | head -60
+          done
+          echo "=== GuiGraphics (selected)"
+          javap -cp "$JAR" net.minecraft.client.gui.GuiGraphics | grep -E 'drawString|drawCentered|fill\(|renderItem\(|Scissor|pose\(' | head -30
+          echo "=== Screen input"
+          javap -cp "$JAR" net.minecraft.client.gui.screens.Screen | grep -E 'mouse|key' | head -20
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: freemotes-jar
+          path: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar
+
+      - name: Client gametest (boots the game headless, plays every emote, takes screenshots)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri > /dev/null
+          nproc; free -g
+          # if world loading hangs, capture thread dumps of the game JVM so we can see what it is waiting on
+          (
+            sleep 75
+            for i in 1 2; do
+              for pid in $(jps -l | grep -viE 'gradle|jps' | awk '{print $1}'); do
+                echo "===== jstack $pid (#$i)"; jstack "$pid" | grep -A 25 -E '"(Server thread|Render thread|Worker-Main|Test thread|IO-Worker)' | head -250
+              done
+              sleep 20
+            done
+          ) > threaddump.txt 2>&1 &
+          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest || { cat threaddump.txt; exit 1; }
+
+      - name: Collect screenshots + log
+        if: always()
+        run: |
+          mkdir -p shots
+          find . -path ./shots -prune -o -type f -path '*screenshots*' -name '*.png' -print -exec cp {} shots/ \; || true
+          LOG=$(find . -path '*clientGameTest*' -name latest.log | head -1)
+          [ -n "$LOG" ] && cp "$LOG" shots/latest.log && grep -nE 'ERROR|Exception|Mixin|freemotes' "$LOG" | head -80 || true
+          ls -la shots
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gametest-screenshots
+          path: shots/
+          if-no-files-found: warn
+
+      - name: Push screenshots to ci-screenshots branch
+        if: always() && github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
+        run: |
+          cd shots
+          git init -q && git checkout -q -b ci-screenshots
+          git config user.name "github-actions" && git config user.email "github-actions@users.noreply.github.com"
+          git add -A && git commit -qm "Gametest screenshots for ${GITHUB_SHA}" || exit 0
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" ci-screenshots
+
+      - name: Publish release (tags only)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/libs/!(*-sources).jar

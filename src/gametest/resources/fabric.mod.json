@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "freemotes-gametest",
+  "version": "1.0.0",
+  "name": "FreeMotes Client Gametest",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": ["dev.freemotes.test.FreeMotesClientGameTest"]
+  },
+  "depends": { "freemotes": "*" }
+}

@@ -30,7 +30,28 @@ jobs:
           cat gradle.properties
 
       - name: Build
-        run: chmod +x gradlew && ./gradlew build --stacktrace
+        run: chmod +x gradlew && ./gradlew build
+
+      - name: Dump Minecraft API signatures (on failure, to help fix compile errors)
+        if: failure()
+        run: |
+          JAR=$(find ~/.gradle .gradle -path '*minecraft*' -name '*.jar' ! -name '*sources*' 2>/dev/null | grep -iE 'merged|client' | grep -v intermediary | head -1)
+          echo "jar: $JAR"
+          for c in net.minecraft.client.renderer.entity.layers.RenderLayer \
+                   net.minecraft.client.renderer.SubmitNodeCollector \
+                   net.minecraft.client.renderer.OrderedSubmitNodeCollector \
+                   net.minecraft.client.renderer.rendertype.RenderTypes \
+                   net.minecraft.client.renderer.RenderType \
+                   'net.minecraft.client.KeyMapping$Category' \
+                   net.minecraft.client.gui.screens.inventory.InventoryScreen \
+                   net.minecraft.client.model.geom.PartPose \
+                   net.minecraft.client.renderer.entity.LivingEntityRenderer; do
+            echo "=== $c"; javap -cp "$JAR" "$c" 2>&1 | grep -vE '^Compiled' | head -60
+          done
+          echo "=== GuiGraphics (selected)"
+          javap -cp "$JAR" net.minecraft.client.gui.GuiGraphics | grep -E 'drawString|drawCentered|fill\(|renderItem\(|Scissor|pose\(' | head -30
+          echo "=== Screen input"
+          javap -cp "$JAR" net.minecraft.client.gui.screens.Screen | grep -E 'mouse|key' | head -20
 
       - uses: actions/upload-artifact@v4
         with:

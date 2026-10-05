@@ -64,7 +64,17 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri > /dev/null
           nproc; free -g
-          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest
+          # if world loading hangs, capture thread dumps of the game JVM so we can see what it is waiting on
+          (
+            sleep 75
+            for i in 1 2; do
+              for pid in $(jps -l | grep -viE 'gradle|jps' | awk '{print $1}'); do
+                echo "===== jstack $pid (#$i)"; jstack "$pid" | grep -A 25 -E '"(Server thread|Render thread|Worker-Main|Test thread|IO-Worker)' | head -250
+              done
+              sleep 20
+            done
+          ) > threaddump.txt 2>&1 &
+          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest || { cat threaddump.txt; exit 1; }
         env:
           LP_NUM_THREADS: 2
           MESA_GL_VERSION_OVERRIDE: "4.5"

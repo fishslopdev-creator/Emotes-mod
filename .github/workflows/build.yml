@@ -60,6 +60,21 @@ jobs:
             build/libs/*.jar
             !build/libs/*-sources.jar
 
+      - name: Client gametest (boots the game headless, plays every emote, takes screenshots)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri > /dev/null
+          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gametest-screenshots
+          path: |
+            build/run/clientGameTest/screenshots/
+            run/clientGameTest/screenshots/
+            build/run/clientGameTest/logs/latest.log
+          if-no-files-found: warn
+
       - name: Publish release (tags only)
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2

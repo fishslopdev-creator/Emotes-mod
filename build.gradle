@@ -40,3 +40,13 @@ jar {
         rename { "${it}_${project.base.archivesName.get()}" }
     }
 }
+
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "freemotes-gametest"
+        enableGameTests = false
+        enableClientGameTests = true
+        eula = true
+    }
+}

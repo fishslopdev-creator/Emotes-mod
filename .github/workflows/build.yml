@@ -75,9 +75,6 @@ jobs:
             done
           ) > threaddump.txt 2>&1 &
           xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest || { cat threaddump.txt; exit 1; }
-        env:
-          LP_NUM_THREADS: 2
-          MESA_GL_VERSION_OVERRIDE: "4.5"
 
       - name: Collect screenshots + log
         if: always()

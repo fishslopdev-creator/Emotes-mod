@@ -15,6 +15,9 @@ public class FreeMotesClientGameTest implements FabricClientGameTest {
     @Override
     public void runTest(ClientGameTestContext context) {
         context.runOnClient(mc -> {
+            // the menu blur post-pass is extremely slow under software GL (CI) and, because the gametest
+            // runs client and server in lock-step, starves the integrated server during world loading
+            mc.options.menuBackgroundBlurriness().set(0);
             FMConfig cfg = FMConfig.get();
             cfg.equipped.put("HEAD", "propeller");
             cfg.equipped.put("FACE", "shades");
